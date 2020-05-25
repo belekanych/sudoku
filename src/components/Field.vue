@@ -1,5 +1,8 @@
 <template>
-    <div class="rounded-lg card bg-gray-300 overflow-hidden">
+    <div
+        class="rounded-lg card bg-gray-300 overflow-hidden"
+        @keydown.prevent="onKeyDown"
+    >
         <div
             v-for="(row, rowIndex) in value"
             :key="rowIndex"
@@ -7,9 +10,12 @@
         >
             <cell
                 v-for="(col, colIndex) in row"
+                :row="rowIndex"
+                :col="colIndex"
+                :active="active"
                 :key="colIndex"
                 :value="col"
-                @input="cellValue => onInput(rowIndex, colIndex, cellValue)"
+                @click="onCellClick"
             />
         </div>
     </div>
@@ -31,16 +37,73 @@
             },
         },
 
+        data () {
+            return {
+                active: {
+                    row: null,
+                    col: null,
+                },
+            };
+        },
+
         components: {
             Cell,
         },
 
+        computed: {
+            hasActive () {
+                return this.active.row !== null && this.active.col !== null;
+            },
+        },
+
         methods: {
-            onInput (row, col, value) {
+            onCellClick ({ row, col }) {
+                this.active.row = row;
+                this.active.col = col;
+            },
+
+            onKeyDown (e) {
+                const keyCode = e.keyCode;
+
+                if (keyCode >= 48 && keyCode <= 57) {
+                    this.onInput(keyCode - 48);
+                }
+
+                if (keyCode === 8) {
+                    this.onInput(0);
+                }
+
+                if (keyCode >= 37 && keyCode <= 40) {
+                    this.onMove(e.key);
+                }
+            },
+
+            onInput (value) {
+                if (! this.hasActive) {
+                    return;
+                }
+
                 const puzzle = this.value;
-                puzzle[row][col] = value;
+                puzzle[this.active.row][this.active.col] = value;
 
                 this.$emit('input', puzzle);
+            },
+
+            onMove (direction) {
+                switch (direction) {
+                    case 'ArrowLeft':
+                        this.active.col = Math.max(0, this.active.col - 1);
+                        break;
+                    case 'ArrowUp':
+                        this.active.row = Math.max(0, this.active.row - 1);
+                        break;
+                    case 'ArrowRight':
+                        this.active.col = Math.min(this.active.col + 1, this.value[0].length - 1);
+                        break;
+                    case 'ArrowDown':
+                        this.active.row = Math.min(this.active.row + 1, this.value.length - 1);
+                        break;
+                }
             },
         },
     }

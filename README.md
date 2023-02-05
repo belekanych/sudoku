@@ -1,24 +1,30 @@
-# sudoku
+# Sudoku
 
-## Project setup
-```
-npm install
-```
+## Preview
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+![Empty](/src/assets/screenshot-empty.png "Empty")
+![Filled](/src/assets/screenshot-filled.png "Filled")
+![Solved](/src/assets/screenshot-solved.png "Solved")
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Installation
+Docker, Docker Compose and Make are required to install the project.
 
-### Lints and fixes files
+To start the project run the command:
 ```
-npm run lint
+make start
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+To install all the needed dependencies:
+```
+make install
+```
+
+To run the application locally:
+```
+make dev
+```
+
+To stop the project:
+```
+make stop
+```
